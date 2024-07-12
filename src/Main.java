@@ -1,8 +1,19 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Main {
+    public static final String EOF = "EOF";
+
     public static void main(String[] args) {
+        List<String> buffer = new ArrayList<>();
+        MyProducer producer = new MyProducer(buffer,ThreadColor.ANSI_BLUE);
+        MyConsumer consumer1 = new MyConsumer(buffer,ThreadColor.ANSI_GREEN);
+        MyConsumer consumer2 = new MyConsumer(buffer,ThreadColor.ANSI_YELLOW);
+
+        new Thread(producer).start();
+        new Thread(consumer1).start();
+        new Thread(consumer2).start();
 
     }
 }
@@ -53,7 +64,7 @@ class MyConsumer implements Runnable {
             if (buffer.isEmpty()) {
                 continue;
             }
-            if (buffer.get(0).equals(EOF)){
+            if (buffer.get(0).equals(Main.EOF)){
                 System.out.println(color + "Exiting...");
                 break;
             }else {

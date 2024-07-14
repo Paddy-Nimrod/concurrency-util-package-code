@@ -77,6 +77,8 @@ class MyConsumer implements Runnable {
 
     public void run() {
 
+        int counter = 0;
+
         while (true) {
             if (bufferLock.tryLock()){
                 try {
@@ -84,6 +86,8 @@ class MyConsumer implements Runnable {
 
                         continue;
                     }
+                    System.out.println(color + "The counter is " + counter);
+                    counter=0;
                     if (buffer.get(0).equals(Main.EOF)) {
                         System.out.println(color + "Exiting...");
 
@@ -94,6 +98,8 @@ class MyConsumer implements Runnable {
                 } finally {
                     bufferLock.unlock();
                 }
+            }else {
+                counter++;
             }
 
         }

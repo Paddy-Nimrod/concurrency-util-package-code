@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
@@ -23,6 +21,22 @@ public class Main {
         executorService.execute(consumer1);
         executorService.execute(consumer2);
 
+
+        Future<String> future = executorService.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                System.out.println(ThreadColor.ANSI_WHITE + "I'm being printed from the callable class.");
+                return "This is the callable result";
+            }
+        });
+
+        try {
+            System.out.println(future.get());
+        } catch (ExecutionException e) {
+            System.out.println("Something went wrong on the future callable");
+        } catch (InterruptedException e) {
+            System.out.println("Thread running the task was interrupted.");
+        }
 
         executorService.shutdown();
 
@@ -89,14 +103,14 @@ class MyConsumer implements Runnable {
         int counter = 0;
 
         while (true) {
-            if (bufferLock.tryLock()){
+            if (bufferLock.tryLock()) {
                 try {
                     if (buffer.isEmpty()) {
 
                         continue;
                     }
                     System.out.println(color + "The counter is " + counter);
-                    counter=0;
+                    counter = 0;
                     if (buffer.get(0).equals(Main.EOF)) {
                         System.out.println(color + "Exiting...");
 
@@ -107,7 +121,7 @@ class MyConsumer implements Runnable {
                 } finally {
                     bufferLock.unlock();
                 }
-            }else {
+            } else {
                 counter++;
             }
 
